@@ -1179,17 +1179,21 @@ details[open] .faq-chevron { transform: rotate(180deg); }
 
 /* Map */
 .map-wrap {
-  margin-top: 16px;
   border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1.5px solid var(--border);
   box-shadow: var(--shadow-sm);
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
 }
 
 .map-wrap iframe {
   display: block;
   width: 100%;
-  height: 260px;
+  height: 100%;
+  min-height: 420px;
   border: 0;
 }
 
@@ -1429,7 +1433,7 @@ details[open] .faq-chevron { transform: rotate(180deg); }
 
   .faq-inner { grid-template-columns: 1fr 1.4fr; align-items: start; }
 
-  .contact-inner { grid-template-columns: 1fr 1.2fr; align-items: start; }
+  .contact-inner { grid-template-columns: 1fr 1fr; align-items: stretch; }
 
   .footer-grid { grid-template-columns: 1.6fr 1fr 1fr 1.4fr; }
 }
@@ -1840,11 +1844,95 @@ input:focus, select:focus, textarea:focus {
   stroke-linejoin: round;
 }
 
-/* --- Reduce motion overrides --- */
+
+/* ============================================================
+   Glimpses Marquee — infinite auto-scroll right → left
+   ============================================================ */
+
+/* Outer wrapper: clips the overflow and fades edges */
+.glimpses-marquee-wrapper {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  /* Soft fade masks on left & right edges */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 8%,
+    #000 92%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 8%,
+    #000 92%,
+    transparent 100%
+  );
+}
+
+/* Scrolling track — wide enough to hold all 12 cards in one row */
+.glimpses-track {
+  display: flex;
+  gap: 20px;
+  width: max-content;
+  animation: glimpses-scroll 28s linear infinite;
+  will-change: transform;
+}
+
+/* Pause on hover for accessibility / browsing comfort */
+.glimpses-marquee-wrapper:hover .glimpses-track {
+  animation-play-state: paused;
+}
+
+/* Individual image card — 3:4 portrait ratio */
+.glimpses-item {
+  flex: 0 0 auto;
+  width: 300px;
+  height: 400px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.glimpses-item:hover {
+  transform: scale(1.04);
+  box-shadow: var(--shadow-lg);
+}
+
+.glimpses-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.glimpses-item:hover img {
+  transform: scale(1.07);
+}
+
+/* Keyframe: translateX -50% scrolls exactly the first 6 (original) cards out */
+@keyframes glimpses-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .glimpses-item {
+    width: 195px;
+    height: 260px;
+  }
+}
+
+/* Reduce-motion override */
 @media (prefers-reduced-motion: reduce) {
   .hero-image  { animation: none !important; }
   .pill::after { display: none; }
   .hero-text > * { opacity: 1 !important; transform: none !important; animation: none !important; }
   .hero-text.animated > * { animation: none !important; opacity: 1 !important; transform: none !important; }
   #cursor-glow { display: none !important; }
+  .glimpses-track { animation: none !important; }
 }
